@@ -6,6 +6,7 @@
  * Time: 15:05
  * http://t.me/ForTestCurrencyBot
  * https://api.telegram.org/bot491206841:AAH8wHuoCrTJ7oq5TjrCMHKrPkd7e9z4QSA/getUpdates
+ * testSendMsg
  */
 
 include_once('TelegramBot.php');
@@ -16,11 +17,16 @@ use Currency\Currency;
 use Tools\Tools;
 use TelegramBot\TelegramBot;
 
-$intervalSec = 60 * 15; // 15 min
+// $intervalSec = 60 * 15; // 15 min
+$intervalSec = 10; // 10 sec
+$intervalSecondSec = 30; // 30 sec
+$firstChatId = 412846761;
+$secondChatID = -218487457;
+$sendTime = 0;
 
 $currency = new Currency();
 $telegramApi = new TelegramBot();
-$chatId = $telegramApi->getChatId();
+// $chatId = $telegramApi->getChatId();
 
 while (true) {
     // массив валют [CODE, NAME]
@@ -36,6 +42,7 @@ while (true) {
     $arrDiff = Tools::ArrCompare($arCurrency, $storageData); // разница сравнения
 
     if (!empty($arrDiff)) {
+        $sendTime = time() + $intervalSecondSec;
         $msg = "";
         foreach ($arrDiff as $exchange => $coins) {
             $msg .= $exchange . "   :   ";
@@ -44,8 +51,14 @@ while (true) {
             }
             $msg .= PHP_EOL;
         }
-        $telegramApi->sendMessage($chatId, $msg);
+        // $telegramApi->sendMessage($chatId, $msg);
+        $telegramApi->sendMessage($firstChatId, $msg);
     }
+    if ($sendTime > 0 && time() >= $sendTime) {
+        $telegramApi->sendMessage($secondChatID, $msg);
+        $sendTime = 0;
+    }
+    sleep($intervalSec);
 
     /*
     // ответ бота на сообщения в чате
@@ -54,6 +67,4 @@ while (true) {
         $telegramApi->sendMessage($update->message->chat->id, 'Kukara4a!');
     }
     */
-
-    sleep($intervalSec);
 }
