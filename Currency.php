@@ -34,7 +34,7 @@ class Currency {
         $result = [];
         $response = json_decode(file_get_contents($this->poloniexUrl));
         foreach ($response as $code => $coin) {
-            if ($coin->disabled > 0 || $coin->forzen > 0) {
+            if ($coin->disabled == 0 || $coin->forzen == 0) {
                 $result[$code] = [
                     "CODE" => $code,
                     "NAME" => $coin->name

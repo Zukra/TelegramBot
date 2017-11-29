@@ -19,9 +19,10 @@ use TelegramBot\TelegramBot;
 
 // $intervalSec = 60 * 15; // 15 min
 $intervalSec = 10; // 10 sec
-$intervalSecondSec = 30; // 30 sec
+$intervalSecondSec = 20; // 30 sec
 $firstChatId = 412846761;
-$secondChatID = -218487457;
+// $secondChatID = -218487457;
+$secondChatID = -1001325237083;
 $sendTime = 0;
 
 $currency = new Currency();
@@ -43,15 +44,11 @@ while (true) {
 
     if (!empty($arrDiff)) {
         $sendTime = time() + $intervalSecondSec;
-        $msg = "";
-        foreach ($arrDiff as $exchange => $coins) {
-            $msg .= $exchange . "   :   ";
-            foreach ($coins as $coin) {
-                $msg .= $coin["CODE"] . " = " . $coin["NAME"] . "  ";
-            }
-            $msg .= PHP_EOL;
-        }
+
+        $msg = Tools::getMsg($arCurrency, $arrDiff);
+
         // $telegramApi->sendMessage($chatId, $msg);
+        // $telegramApi->sendMessage($firstChatId, $msg, "html");
         $telegramApi->sendMessage($firstChatId, $msg);
     }
     if ($sendTime > 0 && time() >= $sendTime) {

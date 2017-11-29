@@ -40,8 +40,12 @@ class TelegramBot {
         return $this->chatId;
     }
 
-    public function sendMessage($chatId, $msg) {
+    public function sendMessage($chatId, $msg, $parse_mode) {
 
-        return $this->query("sendMessage", ["chat_id" => $chatId, "text" => $msg]);
+        return $this->query("sendMessage", [
+            "chat_id"    => $chatId,
+            "text"       => $msg,
+            "parse_mode" => $parse_mode
+        ]);
     }
 }
