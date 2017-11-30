@@ -1,12 +1,7 @@
 <?php return $arData = array (
   'BITTREX' => 
   array (
-    'BTC' => 
-    array (
-      'CODE' => 'BTC',
-      'NAME' => 'Bitcoin',
-    ),
-    'LTC' => 
+    'LTC' =>
     array (
       'CODE' => 'LTC',
       'NAME' => 'Litecoin',
