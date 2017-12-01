@@ -6,7 +6,7 @@
  * Time: 16:19
  */
 
-namespace TelegramBot;
+namespace lib;
 
 
 class TelegramBot {

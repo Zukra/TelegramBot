@@ -6,7 +6,7 @@
  * Time: 18:32
  */
 
-namespace Tools;
+namespace lib;
 
 
 class Tools {
