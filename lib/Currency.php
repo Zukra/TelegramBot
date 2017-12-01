@@ -10,43 +10,28 @@ namespace lib;
 
 
 class Currency {
-    protected $arExchange = [
-        "BITTREX"        => "https://bittrex.com/api/v1.1/public/getcurrencies",
-        "POLONIEX"       => "https://poloniex.com/public?command=returnCurrencies",
-        "KRAKEN"         => "https://api.kraken.com/0/public/Assets",
-        "BINANCE"        => "https://api.binance.com/api/v1/ticker/allPrices",
-        "BITFINEX"       => "https://api.bitfinex.com/v1/symbols",
-        "LIQUI"          => "https://api.liqui.io/api/3/info",
-        "BITSTAMP"       => "https://www.bitstamp.net/api/v2/trading-pairs-info",
-        "BITHUMB"        => "https://api.bithumb.com/public/ticker/all",
-        "GDAX"           => "https://api.gdax.com/currencies",
-        "GEMINI"         => "https://api.gemini.com/v1/symbols",
-        "HITBTCSYMBOL"   => "https://api.hitbtc.com/api/2/public/symbol",
-        "HITBTC"         => "https://api.hitbtc.com/api/2/public/currency",
-        "QUOINEX"        => "https://api.quoine.com/products",
-        "THEROCKTRADING" => "https://api.therocktrading.com/v1/funds",
-        "WEX"            => "https://wex.nz/api/3/info",
-        "EXMO"           => "https://api.exmo.com/v1/currency/",
-        "MERCATOX"       => "https://mercatox.com/public/json24",
-        "TIDEX"          => "https://api.tidex.com/api/3/info",
-    ];
 
     private static function getResponse($url) {
-        $headers = ["Content-Type: application/json"];
+        $headers = ["Content-Type: application/json;charset=UTF-8"];
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+//        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+//        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+//        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         $callResult = curl_exec($ch);
         curl_close($ch);
 
         return json_decode($callResult);
     }
 
-    public function getBittrexCurrency() {
+    public function getBittrexCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["BITTREX"]);
+        $response = static::getResponse($url);
         foreach ($response->result as $coin) {
             if ($coin->IsActive) {
                 $result[$coin->Currency] = [
@@ -59,9 +44,9 @@ class Currency {
         return $result;
     }
 
-    public function getPoloniexCurrency() {
+    public function getPoloniexCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["POLONIEX"]);
+        $response = static::getResponse($url);
         foreach ($response as $code => $coin) {
             if ($coin->disabled == 0 || $coin->forzen == 0) {
                 $result[$code] = [
@@ -74,9 +59,9 @@ class Currency {
         return $result;
     }
 
-    public function getKrakenCurrency() {
+    public function getKrakenCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["KRAKEN"]);
+        $response = static::getResponse($url);
         foreach ($response->result as $code => $coin) {
             $result[$code] = [
                 "CODE" => $code,
@@ -87,9 +72,9 @@ class Currency {
         return $result;
     }
 
-    public function getBinanceCurrency() {
+    public function getBinanceCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["BINANCE"]);
+        $response = static::getResponse($url);
         foreach ($response as $coin) {
             $result[$coin->symbol] = [
                 "CODE" => $coin->symbol,
@@ -100,9 +85,9 @@ class Currency {
         return $result;
     }
 
-    public function getBitfinexCurrency() {
+    public function getBitfinexCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["BITFINEX"]);
+        $response = static::getResponse($url);
         foreach ($response as $coin) {
             $result[strtoupper($coin)] = [
                 "CODE" => strtoupper($coin),
@@ -113,9 +98,9 @@ class Currency {
         return $result;
     }
 
-    public function getLiquiCurrency() {
+    public function getLiquiCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["LIQUI"]);
+        $response = static::getResponse($url);
         foreach ($response->pairs as $code => $coin) {
             $result[strtoupper($code)] = [
                 "CODE" => strtoupper($code),
@@ -126,9 +111,9 @@ class Currency {
         return $result;
     }
 
-    public function getBitstampCurrency() {
+    public function getBitstampCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["BITSTAMP"]);
+        $response = static::getResponse($url);
         var_dump($response);
 //        foreach ($response->pairs as $code => $coin) {
 //            $result[strtoupper($code)] = [
@@ -140,9 +125,9 @@ class Currency {
         return $result;
     }
 
-    public function getBithumbCurrency() {
+    public function getBithumbCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["BITHUMB"]);
+        $response = static::getResponse($url);
         foreach ($response->data as $code => $coin) {
             $result[$code] = [
                 "CODE" => strtoupper($code),
@@ -153,9 +138,9 @@ class Currency {
         return $result;
     }
 
-    public function getGdaxCurrency() {
+    public function getGdaxCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["GDAX"]);
+//        $response = static::getResponse($url);
 //        foreach ($response->data as $code => $coin) {
 //            $result[$code] = [
 //                "CODE" => strtoupper($code),
@@ -166,9 +151,9 @@ class Currency {
         return $result;
     }
 
-    public function getGeminiCurrency() {
+    public function getGeminiCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["GEMINI"]);
+        $response = static::getResponse($url);
         foreach ($response as $pair) {
             $result[$pair] = [
                 "CODE" => strtoupper($pair),
@@ -179,8 +164,8 @@ class Currency {
         return $result;
     }
 
-    public function getHitbtcCurrency() {
-        $response = static::getResponse($this->arExchange["HITBTC"]);
+    public function getHitbtcCurrency($url) {
+        $response = static::getResponse($url);
         $result = [];
         foreach ($response as $coin) {
             $result[$coin->id] = [
@@ -192,9 +177,9 @@ class Currency {
         return $result;
     }
 
-    public function getHitbtcCurrencySymbol() {
+    public function getHitbtcCurrencySymbol($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["HITBTCSYMBOL"]);
+        $response = static::getResponse($url);
         foreach ($response as $pair) {
             $result[$pair->id] = [
                 "CODE" => $pair->id,
@@ -205,9 +190,9 @@ class Currency {
         return $result;
     }
 
-    public function getQuoinexCurrency() {
+    public function getQuoinexCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["QUOINEX"]);
+        $response = static::getResponse($url);
         foreach ($response as $pair) {
             $result[$pair->currency_pair_code] = [
                 "CODE" => $pair->currency_pair_code,
@@ -218,9 +203,9 @@ class Currency {
         return $result;
     }
 
-    public function getWexCurrency() {
+    public function getWexCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["WEX"]);
+        $response = static::getResponse($url);
         foreach ($response->pairs as $pair => $coin) {
             $result[$pair] = [
                 "CODE" => strtoupper($pair),
@@ -231,9 +216,9 @@ class Currency {
         return $result;
     }
 
-    public function getExmoCurrency() {
+    public function getExmoComCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["EXMO"]);
+        $response = static::getResponse($url);
         foreach ($response as $coin) {
             $result[$coin] = [
                 "CODE" => $coin,
@@ -244,9 +229,9 @@ class Currency {
         return $result;
     }
 
-    public function getTherocktradingCurrency() {
+    public function getTherocktradingCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["THEROCKTRADING"]);
+        $response = static::getResponse($url);
         foreach ($response->funds as $pair) {
             $result[$pair->id] = [
                 "CODE" => $pair->id,
@@ -257,8 +242,8 @@ class Currency {
         return $result;
     }
 
-    public function getMercatoxCurrency() {
-        $response = static::getResponse($this->arExchange["MERCATOX"]);
+    public function getMercatoxCurrency($url) {
+        $response = static::getResponse($url);
         $result = [];
         foreach ($response->pairs as $pair => $coin) {
             $result[$pair] = [
@@ -270,13 +255,199 @@ class Currency {
         return $result;
     }
 
-    public function getTidexCurrency() {
+    public function getTidexCurrency($url) {
         $result = [];
-        $response = static::getResponse($this->arExchange["TIDEX"]);
+        $response = static::getResponse($url);
         foreach ($response->pairs as $pair => $info) {
             $result[strtoupper($pair)] = [
                 "CODE" => strtoupper($pair),
                 "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getAcxCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair) {
+            $result[strtoupper($pair->id)] = [
+                "CODE" => strtoupper($pair->id),
+                "NAME" => $pair->name
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getAbucoinsCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair) {
+            $result[$pair->id] = [
+                "CODE" => $pair->id,
+                "NAME" => $pair->display_name
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getBtcalphaCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair) {
+            $result[$pair->name] = [
+                "CODE" => $pair->name,
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getBitzCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->data as $pair => $info) {
+            $result[strtoupper($pair)] = [
+                "CODE" => strtoupper($pair),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getCexioCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->data->pairs as $pair) {
+            $result[strtoupper($pair->symbol1 . $pair->symbol2)] = [
+                "CODE" => strtoupper($pair->symbol1 . $pair->symbol2),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getCoinexchangeIoCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->result as $coin) {
+            $result[$coin->MarketAssetCode] = [
+                "CODE" => $coin->MarketAssetCode,
+                "NAME" => $coin->MarketAssetName
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getCoinroomComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->crypto as $coin) {
+            $result[$coin] = [
+                "CODE" => $coin,
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getCryptopiaCoNzCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->Data as $coin) {
+            $result[$coin->Symbol] = [
+                "CODE" => $coin->Symbol,
+                "NAME" => $coin->Name
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getDsxUkCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->pairs as $coin => $info) {
+            $result[strtoupper($coin)] = [
+                "CODE" => strtoupper($coin),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getGateIoCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair) {
+            $result[strtoupper($pair)] = [
+                "CODE" => strtoupper($pair),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getIndependentreserveComCurrency($url) {
+        $result = [];
+        $response = array_merge(
+            static::getResponse($url . "GetValidPrimaryCurrencyCodes"),
+            static::getResponse($url . "GetValidSecondaryCurrencyCodes")
+        );
+
+        foreach ($response as $coin) {
+            $result[strtoupper($coin)] = [
+                "CODE" => strtoupper($coin),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getLitebitEuCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->result as $coin) {
+            $result[strtoupper($coin->abbr)] = [
+                "CODE" => strtoupper($coin->abbr),
+                "NAME" => $coin->name
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getLivecoinNetCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->info as $coin) {
+            $result[$coin->symbol] = [
+                "CODE" => $coin->symbol,
+                "NAME" => $coin->name
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getNeraexComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $coin) {
+            $result[strtoupper($coin->id)] = [
+                "CODE" => strtoupper($coin->id),
+                "NAME" => $coin->name
             ];
         }
 
