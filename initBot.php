@@ -14,25 +14,35 @@ use lib\Currency;
 use lib\TelegramBot;
 use lib\Tools;
 
+
+//TODO  выводить удалённые монеты
+
 /**
  *  412846761       Crypto currency (@ForTestCurrencyBot)
- * -1001325237083   SendNewCoin     (@shownewcoin)
- * -1001339615839   SendNewCoin     (@sendnewcoin) (for testing)
+ * -1001339615839   AddNewCoins     (@sendnewcoin)
+ * -1001325237083   SendNewCoinTest (@shownewcoin) (for testing)
  * -218487457       TestSendCoin    (@testSendMsg) (for test need remove)
  */
 
 $intervalSec = 60; // sec
 $intervalSecondSec = 60 * 10; // 10 min
 $generalChatId = 412846761;
-$secondChatID = -1001325237083;
-$sendTime = 0;
+$secondChatID = -1001339615839;
+$msgQueue = []; // очередь сообщений для отправки с задержкой
+$sendTime = 0; // время отправки
+$timeForMoreSend = 0; // время для отправки сообщения в доп. чат
 
 
-$generalChatId = -1001339615839; // for test
+// for test
+$generalChatId = -1001325237083; // for test
+$secondChatID = -218487457; // for test
+$intervalSec = 10; // for test
+$intervalSecondSec = 60; // for test
 
 
 $currency = new Currency();
 $telegramApi = new TelegramBot();
+
 
 while (true) {
     $arCurrency = [
@@ -52,7 +62,7 @@ while (true) {
 //        "LITEBIT_EU"             => $currency->getLitebitEuCurrency("https://api.litebit.eu/markets"),
 //        "LIVECOIN_NET"           => $currency->getLivecoinNetCurrency("https://api.livecoin.net/info/coinInfo"),
 //        "NERAEX_COM"             => $currency->getNeraexComCurrency("https://neraex.com/api/v2/markets"),
-        "POLONIEX"               => $currency->getPoloniexCurrency("https://poloniex.com/public?command=returnCurrencies"),
+        "POLONIEX" => $currency->getPoloniexCurrency("https://poloniex.com/public?command=returnCurrencies"),
 //        "KRAKEN"                 => $currency->getKrakenCurrency("https://api.kraken.com/0/public/Assets"),
 //        "BINANCE"                => $currency->getBinanceCurrency("https://api.binance.com/api/v1/ticker/allPrices"),
 //        "LIQUI"                  => $currency->getLiquiCurrency("https://api.liqui.io/api/3/info"),
@@ -79,21 +89,23 @@ while (true) {
     $arrDiff = Tools::compareData($arCurrency, $storageData); // разница сравнения
 
     if (!empty($arrDiff)) {
-        $sendTime = time() + $intervalSecondSec;
-
         $msg = Tools::getMessage($arrDiff);  // формирование сообщения из новых монет
 
         // $telegramApi->sendMessage($generalChatId, $msg, "html");
         $telegramApi->sendMessage($generalChatId, $msg);
+
+        $sendTime = time();  // время отправки
+        $timeForMoreSend = $sendTime + $intervalSecondSec; // время отправки в доп. чат
+
+        $msgQueue[] = ["TIME" => $timeForMoreSend, "MSG" => $msg];
     }
-    /*
-    if ($sendTime > 0 && time() >= $sendTime) {
-        $telegramApi->sendMessage($secondChatID, $msg);
-        $sendTime = 0;
+
+    if (!empty($msgQueue[0]) && time() >= $msgQueue[0]["TIME"]) {
+        $elem = array_shift($msgQueue);
+        $telegramApi->sendMessage($secondChatID, $elem["MSG"]);
     }
 
     sleep($intervalSec);
-    */
 
-    exit();
+//    exit();
 }

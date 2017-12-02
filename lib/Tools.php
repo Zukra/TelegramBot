@@ -12,24 +12,29 @@ namespace lib;
 class Tools {
     protected static $arData;
 
+    // not use
     public static function ReadArray() {
         static::$arData = include('storage.php');
     }
 
+    // not use
     public static function GetArray() {
         return static::$arData;
     }
 
+    // not use
     public static function SetArray($data) {
         static::$arData = $data;
     }
 
+    // not use
     public static function Write() {
         $StorageData = '<?php return $arData = ' . var_export(static::GetArray(), true) . '; ?>';
 //        echo "file to write\n-------------\n$StorageData\n-------------\n";
         file_put_contents('storage.php', $StorageData);
     }
 
+    // not use
     public static function ArrCompare($arCurrency, $storageData) {
         $arrDiff = [];
         // если в полученном массиве больше валют,
@@ -51,6 +56,7 @@ class Tools {
         return $arrDiff;
     }
 
+    // not use
     public static function getMsg($arCurrency, $arrDiff) {
         $msg = "";
         $arAddedCoins = static::getAddedCoins($arrDiff); // добавленные монеты
@@ -100,6 +106,7 @@ class Tools {
         return $msg;
     }
 
+    // not use
     private static function getAddedCoins($arrDiff) {
         $result = [];
         foreach ($arrDiff as $coins) {
@@ -157,7 +164,7 @@ class Tools {
     /**
      * @param $arCurrency
      * @param $storageData
-     * @return array массив новыч монет
+     * @return array массив новых монет
      * сравнение полученных данных и сохранённых
      * если есть различия - сохранение новых данных
      */

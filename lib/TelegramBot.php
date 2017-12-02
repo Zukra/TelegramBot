@@ -34,6 +34,7 @@ class TelegramBot {
     }
 
     public function getChatId() {
+        // get chat id from first message
         $this->chatId = $this->query("getUpdates", ["limit" => 1])
             ->result[0]->message->chat->id;
 
