@@ -6,7 +6,7 @@
  * Time: 18:32
  */
 
-namespace lib;
+namespace zkr\lib;
 
 
 class Tools {
@@ -127,23 +127,33 @@ class Tools {
     }
 
     /**
-     * @param $arCurrency
-     * проверка сохранённых данных
+     * Проверка сохранённых данных,
      * при отсутствии - сохранение полученных данных
+     * @param array $arCurrency - массив полученных данных по биржам
+     * @return array массив сохранённых данных по биржам,
+     * а если таких данных нет - дополняется полученными данными
      */
     public static function checkStoreData($arCurrency) {
+        $result = [];
         foreach ($arCurrency as $nameExch => $coinsExch) {
             $data = static::getData(strtolower($nameExch));
             if (!$data || !isset($data)) {
                 static::writeExchangeToFile([$nameExch => $coinsExch]);
+                if (!empty($coinsExch)) {
+                    $result[$nameExch] = $coinsExch;
+                }
+            } else {
+                $result[$nameExch] = $data[$nameExch];
             }
         }
+
+        return $result;
     }
 
     /**
-     * @param $arExchange
-     * @return array
-     * получить сохранённые данные
+     * Получить сохранённые данные
+     * @param array $arExchange - массив бирж
+     * @return array массив сохранённых данных по биржам
      */
     public static function getStoreData($arExchange) {
         $result = [];
@@ -162,11 +172,11 @@ class Tools {
     }
 
     /**
+     * Сравнение полученных данных и сохранённых
+     * если есть различия - сохранение новых данных
      * @param $arCurrency
      * @param $storageData
      * @return array массив новых монет
-     * сравнение полученных данных и сохранённых
-     * если есть различия - сохранение новых данных
      */
     public static function compareData($arCurrency, $storageData) {
         $arDiff = [];

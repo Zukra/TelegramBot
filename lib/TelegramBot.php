@@ -6,7 +6,7 @@
  * Time: 16:19
  */
 
-namespace lib;
+namespace zkr\lib;
 
 
 class TelegramBot {

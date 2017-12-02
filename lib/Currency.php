@@ -6,25 +6,46 @@
  * Time: 17:39
  */
 
-namespace lib;
+namespace zkr\lib;
 
 
 class Currency {
 
     private static function getResponse($url) {
+
+        $cookieFile = "tmp/cookie.txt";
+
         $headers = ["Content-Type: application/json;charset=UTF-8"];
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+
 //        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+//        curl_setopt($ch, CURLOPT_HEADER, true);
+
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0");
+
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
+//        curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-//        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-//        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
         $callResult = curl_exec($ch);
+
         curl_close($ch);
+
+        file_put_contents($cookieFile, "");
+
+//        xprint($callResult);
 
         return json_decode($callResult);
     }
@@ -140,13 +161,14 @@ class Currency {
 
     public function getGdaxCurrency($url) {
         $result = [];
-//        $response = static::getResponse($url);
-//        foreach ($response->data as $code => $coin) {
-//            $result[$code] = [
-//                "CODE" => strtoupper($code),
-//                "NAME" => "none"
-//            ];
-//        }
+        $response = static::getResponse($url);
+        foreach ($response as $coin) {
+            $result[$coin->id] = [
+                "CODE" => $coin->id,
+                "NAME" => $coin->name
+            ];
+        }
+
 
         return $result;
     }
@@ -155,7 +177,7 @@ class Currency {
         $result = [];
         $response = static::getResponse($url);
         foreach ($response as $pair) {
-            $result[$pair] = [
+            $result[strtoupper($pair)] = [
                 "CODE" => strtoupper($pair),
                 "NAME" => "none"
             ];
@@ -183,7 +205,7 @@ class Currency {
         foreach ($response as $pair) {
             $result[$pair->id] = [
                 "CODE" => $pair->id,
-                "NAME" => $pair->baseCurrency . " / " . $pair->quoteCurrency
+                "NAME" => $pair->baseCurrency . "/" . $pair->quoteCurrency
             ];
         }
 
@@ -196,7 +218,7 @@ class Currency {
         foreach ($response as $pair) {
             $result[$pair->currency_pair_code] = [
                 "CODE" => $pair->currency_pair_code,
-                "NAME" => $pair->base_currency . " / " . $pair->quoted_currency
+                "NAME" => $pair->base_currency . "/" . $pair->quoted_currency
             ];
         }
 
@@ -207,7 +229,7 @@ class Currency {
         $result = [];
         $response = static::getResponse($url);
         foreach ($response->pairs as $pair => $coin) {
-            $result[$pair] = [
+            $result[strtoupper($pair)] = [
                 "CODE" => strtoupper($pair),
                 "NAME" => "none"
             ];
@@ -235,7 +257,7 @@ class Currency {
         foreach ($response->funds as $pair) {
             $result[$pair->id] = [
                 "CODE" => $pair->id,
-                "NAME" => $pair->base_currency . " / " . $pair->trade_currency
+                "NAME" => $pair->base_currency . "/" . $pair->trade_currency
             ];
         }
 
@@ -449,6 +471,205 @@ class Currency {
                 "CODE" => strtoupper($coin->id),
                 "NAME" => $coin->name
             ];
+        }
+
+        return $result;
+    }
+
+    public function getQuadrigacxComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+
+        foreach ($response as $coin => $info) {
+            $result[strtoupper($coin)] = [
+                "CODE" => strtoupper($coin),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getYobitNetCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->pairs as $pair => $info) {
+            $result[strtoupper($pair)] = [
+                "CODE" => strtoupper($pair),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getZbComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair => $info) {
+            $result[strtoupper($pair)] = [
+                "CODE" => strtoupper($pair),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getZaifJpCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $coin) {
+            $result[strtoupper($coin->name)] = [
+                "CODE" => strtoupper($coin->name),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getGatecoinComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->tickers as $pair) {
+            $result[$pair->currencyPair] = [
+                "CODE" => $pair->currencyPair,
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getKucoinComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->data->currencies as $coin) {
+            $result[$coin[0]] = [
+                "CODE" => $coin[0],
+                "NAME" => $coin[1]
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getLykkeComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair) {
+            $result[$pair->Id] = [
+                "CODE" => $pair->Id,
+                "NAME" => $pair->Name
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getBitsaneComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair => $info) {
+            $result[$pair] = [
+                "CODE" => $pair,
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getBleutradeComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->result as $coin) {
+            $result[$coin->Currency] = [
+                "CODE" => $coin->Currency,
+                "NAME" => $coin->CurrencyLong
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getBraziliexComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $currency => $info) {
+            $result[strtoupper($currency)] = [
+                "CODE" => strtoupper($currency),
+                "NAME" => $info->name
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getCryptomateCoUkCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $currency => $info) {
+            $result[$currency] = [
+                "CODE" => $currency,
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getKunaIoCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair => $info) {
+            $result[strtoupper($pair)] = [
+                "CODE" => strtoupper($pair),
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getNovaexchangeComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response->markets as $pair) {
+            $result[$pair->marketname] = [
+                "CODE" => $pair->marketname,
+                "NAME" => "none"
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getSouthxchangeComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        foreach ($response as $pair) {
+            $result[$pair[0] . $pair[1]] = [
+                "CODE" => $pair[0] . $pair[1],
+                "NAME" => $pair[0] . "/" . $pair[1]
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getBitgrailComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        var_dump($response);
+        foreach ($response->response as $pairs) {
+            foreach ($pairs as $pair) {
+                $result[$pair->market] = [
+                    "CODE" => $pair->market,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
