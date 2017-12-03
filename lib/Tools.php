@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 28.11.2017
- * Time: 18:32
- */
 
 namespace zkr\lib;
 

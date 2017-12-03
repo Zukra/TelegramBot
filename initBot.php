@@ -28,6 +28,7 @@ $intervalSec = 60; // sec
 $intervalSecondSec = 60 * 10; // 10 min
 $generalChatId = 412846761;
 $secondChatID = -1001339615839;
+
 $msgQueue = []; // очередь сообщений для отправки с задержкой
 $sendTime = 0; // время отправки
 $timeForMoreSend = 0; // время для отправки сообщения в доп. чат
@@ -37,7 +38,7 @@ $timeForMoreSend = 0; // время для отправки сообщения �
 $generalChatId = -1001325237083;
 $secondChatID = -218487457;
 $intervalSec = 10;
-$intervalSecondSec = 60;
+$intervalSecondSec = 30;
 
 
 $currency = new Currency();
@@ -89,12 +90,22 @@ while (true) {
         "BITFINEX.COM"           => $currency->getBitfinexCurrency("https://api.bitfinex.com/v1/symbols"), // + ???
         "MERCATOX.COM"           => $currency->getMercatoxCurrency("https://mercatox.com/public/json24"), // + ???
         "GDAX.COM"               => $currency->getGdaxCurrency("https://api.gdax.com/currencies"),
+        "COINONE.CO.KR"          => $currency->getCoinoneCoKrCurrency("https://api.coinone.co.kr/ticker/?currency=all"),
+        "C-CEX.COM"              => $currency->getCcexComCurrency("https://c-cex.com/t/coinnames.json"),
+        "EXX.COM"                => $currency->getExxComCurrency("https://api.exx.com/data/v1/markets"),
+        "BITSO.COM"              => $currency->getBitsoComCurrency("https://api.bitso.com/v3/available_books/"),
+        "MARKETS.BISQ.NETWORK"   => $currency->getMarketsBisqNetworkCurrency("https://markets.bisq.network/api/markets"),
+        "VIRCUREX.COM"           => $currency->getVircurexComCurrency("https://api.vircurex.com/api/get_info_for_currency.json"),
 
 //        "BITSTAMP.NET"           => $currency->getBitstampCurrency("https://www.bitstamp.net/api/v2/trading-pairs-info"), // - не фурычит
 //        "BITGRAIL.COM"           => $currency->getBitgrailComCurrency("https://bitgrail.com/api/v1/markets"),  // - не фурычит
 
 //        "HITBTCSYMBOL"           => $currency->getHitbtcCurrencySymbol("https://api.hitbtc.com/api/2/public/symbol"), // double site
     ];
+
+//    xprint($arCurrency);
+//    $test = $currency->getTestCurrency("https://api.vircurex.com/api/get_info_for_currency.json");
+
 
     $storageData = Tools::checkStoreData($arCurrency); // получение/проверка на наличие сохранённых данных
 

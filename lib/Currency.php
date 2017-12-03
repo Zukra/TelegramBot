@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 28.11.2017
- * Time: 17:39
- */
 
 namespace zkr\lib;
 
@@ -731,6 +725,83 @@ class Currency {
         return $result;
     }
 
+    public function getCcexComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        if (!empty($response)) {
+            foreach ($response as $code => $name) {
+                $result[strtoupper($code)] = [
+                    "CODE" => strtoupper($code),
+                    "NAME" => $name
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    public function getExxComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        if (!empty($response)) {
+            foreach ($response as $pair => $info) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    public function getBitsoComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        if ($response->success) {
+            foreach ($response->payload as $pair) {
+                $result[strtoupper($pair->book)] = [
+                    "CODE" => strtoupper($pair->book),
+                    "NAME" => "none"
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    public function getMarketsBisqNetworkCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        if (!empty($response)) {
+            foreach ($response as $pair) {
+                $result[strtoupper($pair->pair)] = [
+                    "CODE" => strtoupper($pair->pair),
+                    "NAME" => $pair->name
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    public function getVircurexComCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        if ($response->status == 0) {
+            foreach ($response as $pair => $info) {
+                if ($pair != 'status') {
+                    $result[strtoupper($pair)] = [
+                        "CODE" => strtoupper($pair),
+                        "NAME" => "none"
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
     public function getSouthxchangeComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
@@ -760,6 +831,44 @@ class Currency {
                 }
             }
         }
+
+        return $result;
+    }
+
+    public function getCoinoneCoKrCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        if ($response->result == "success") {
+            foreach ($response as $info) {
+                if ($info->currency) {
+                    $result[strtoupper($info->currency)] = [
+                        "CODE" => strtoupper($info->currency),
+                        "NAME" => "none"
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    public function getTestCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        var_dump($response);
+
+        /*
+        if ($response->success == 1) {
+            foreach ($response->response as $pairs) {
+                foreach ($pairs as $pair) {
+                    $result[$pair->market] = [
+                        "CODE" => $pair->market,
+                        "NAME" => "none"
+                    ];
+                }
+            }
+        }
+        */
 
         return $result;
     }
