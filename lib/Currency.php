@@ -53,12 +53,14 @@ class Currency {
     public function getBittrexCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->result as $coin) {
-            if ($coin->IsActive) {
+        if ($response->success) {
+            foreach ($response->result as $coin) {
+//            if ($coin->IsActive) {
                 $result[$coin->Currency] = [
                     "CODE" => $coin->Currency,
                     "NAME" => $coin->CurrencyLong
                 ];
+//            }
             }
         }
 
@@ -68,12 +70,14 @@ class Currency {
     public function getPoloniexCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $code => $coin) {
-            if ($coin->disabled == 0 || $coin->forzen == 0) {
-                $result[$code] = [
-                    "CODE" => $code,
-                    "NAME" => $coin->name
-                ];
+        if (empty($response->error)) {
+            foreach ($response as $code => $coin) {
+                if ($coin->disabled == 0 || $coin->forzen == 0) {
+                    $result[$code] = [
+                        "CODE" => $code,
+                        "NAME" => $coin->name
+                    ];
+                }
             }
         }
 
@@ -83,11 +87,13 @@ class Currency {
     public function getKrakenCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->result as $code => $coin) {
-            $result[$code] = [
-                "CODE" => $code,
-                "NAME" => $coin->altname
-            ];
+        if (empty($response->error)) {
+            foreach ($response->result as $code => $coin) {
+                $result[$code] = [
+                    "CODE" => $code,
+                    "NAME" => $coin->altname
+                ];
+            }
         }
 
         return $result;
@@ -96,11 +102,13 @@ class Currency {
     public function getBinanceCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $coin) {
-            $result[$coin->symbol] = [
-                "CODE" => $coin->symbol,
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $coin) {
+                $result[$coin->symbol] = [
+                    "CODE" => $coin->symbol,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -109,11 +117,13 @@ class Currency {
     public function getBitfinexCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $coin) {
-            $result[strtoupper($coin)] = [
-                "CODE" => strtoupper($coin),
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $coin) {
+                $result[strtoupper($coin)] = [
+                    "CODE" => strtoupper($coin),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -122,11 +132,13 @@ class Currency {
     public function getLiquiCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->pairs as $code => $coin) {
-            $result[strtoupper($code)] = [
-                "CODE" => strtoupper($code),
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response->pairs as $code => $coin) {
+                $result[strtoupper($code)] = [
+                    "CODE" => strtoupper($code),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -136,12 +148,14 @@ class Currency {
         $result = [];
         $response = static::getResponse($url);
         var_dump($response);
-//        foreach ($response->pairs as $code => $coin) {
-//            $result[strtoupper($code)] = [
-//                "CODE" => strtoupper($code),
-//                "NAME" => "none"
-//            ];
-//        }
+        if (!empty($response)) {
+            foreach ($response as $pairs) {
+                $result[$pairs->name] = [
+                    "CODE" => $pairs->name,
+                    "NAME" => $pairs->description
+                ];
+            }
+        }
 
         return $result;
     }
@@ -149,11 +163,13 @@ class Currency {
     public function getBithumbCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->data as $code => $coin) {
-            $result[$code] = [
-                "CODE" => strtoupper($code),
-                "NAME" => "none"
-            ];
+        if ($response->status == "0000") {
+            foreach ($response->data as $code => $coin) {
+                $result[$code] = [
+                    "CODE" => strtoupper($code),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -162,13 +178,14 @@ class Currency {
     public function getGdaxCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $coin) {
-            $result[$coin->id] = [
-                "CODE" => $coin->id,
-                "NAME" => $coin->name
-            ];
+        if (empty($response->message)) {
+            foreach ($response as $coin) {
+                $result[$coin->id] = [
+                    "CODE" => $coin->id,
+                    "NAME" => $coin->name
+                ];
+            }
         }
-
 
         return $result;
     }
@@ -176,11 +193,13 @@ class Currency {
     public function getGeminiCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair) {
-            $result[strtoupper($pair)] = [
-                "CODE" => strtoupper($pair),
-                "NAME" => "none"
-            ];
+        if ($response->result !== 'error') {
+            foreach ($response as $pair) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -189,11 +208,13 @@ class Currency {
     public function getHitbtcCurrency($url) {
         $response = static::getResponse($url);
         $result = [];
-        foreach ($response as $coin) {
-            $result[$coin->id] = [
-                "CODE" => $coin->id,
-                "NAME" => $coin->fullName
-            ];
+        if (!empty($response)) {
+            foreach ($response as $coin) {
+                $result[$coin->id] = [
+                    "CODE" => $coin->id,
+                    "NAME" => $coin->fullName
+                ];
+            }
         }
 
         return $result;
@@ -215,11 +236,13 @@ class Currency {
     public function getQuoinexCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair) {
-            $result[$pair->currency_pair_code] = [
-                "CODE" => $pair->currency_pair_code,
-                "NAME" => $pair->base_currency . "/" . $pair->quoted_currency
-            ];
+        if (!empty($response)) {
+            foreach ($response as $pair) {
+                $result[$pair->currency_pair_code] = [
+                    "CODE" => $pair->currency_pair_code,
+                    "NAME" => $pair->base_currency . "/" . $pair->quoted_currency
+                ];
+            }
         }
 
         return $result;
@@ -228,11 +251,13 @@ class Currency {
     public function getWexCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->pairs as $pair => $coin) {
-            $result[strtoupper($pair)] = [
-                "CODE" => strtoupper($pair),
-                "NAME" => "none"
-            ];
+        if ($response->server_time) {
+            foreach ($response->pairs as $pair => $coin) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -241,11 +266,13 @@ class Currency {
     public function getExmoComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $coin) {
-            $result[$coin] = [
-                "CODE" => $coin,
-                "NAME" => "none"
-            ];
+        if (empty($response->error)) {
+            foreach ($response as $coin) {
+                $result[$coin] = [
+                    "CODE" => $coin,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -254,24 +281,28 @@ class Currency {
     public function getTherocktradingCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->funds as $pair) {
-            $result[$pair->id] = [
-                "CODE" => $pair->id,
-                "NAME" => $pair->base_currency . "/" . $pair->trade_currency
-            ];
+        if (!empty($response)) {
+            foreach ($response->funds as $pair) {
+                $result[$pair->id] = [
+                    "CODE" => $pair->id,
+                    "NAME" => $pair->base_currency . "/" . $pair->trade_currency
+                ];
+            }
         }
 
         return $result;
     }
 
     public function getMercatoxCurrency($url) {
-        $response = static::getResponse($url);
         $result = [];
-        foreach ($response->pairs as $pair => $coin) {
-            $result[$pair] = [
-                "CODE" => $pair,
-                "NAME" => "none"
-            ];
+        $response = static::getResponse($url);
+        if (!empty($response)) {
+            foreach ($response->pairs as $pair => $coin) {
+                $result[$pair] = [
+                    "CODE" => $pair,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -280,11 +311,13 @@ class Currency {
     public function getTidexCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->pairs as $pair => $info) {
-            $result[strtoupper($pair)] = [
-                "CODE" => strtoupper($pair),
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response->pairs as $pair => $info) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -293,11 +326,13 @@ class Currency {
     public function getAcxCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair) {
-            $result[strtoupper($pair->id)] = [
-                "CODE" => strtoupper($pair->id),
-                "NAME" => $pair->name
-            ];
+        if (!empty($response)) {
+            foreach ($response as $pair) {
+                $result[strtoupper($pair->id)] = [
+                    "CODE" => strtoupper($pair->id),
+                    "NAME" => $pair->name
+                ];
+            }
         }
 
         return $result;
@@ -306,11 +341,13 @@ class Currency {
     public function getAbucoinsCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair) {
-            $result[$pair->id] = [
-                "CODE" => $pair->id,
-                "NAME" => $pair->display_name
-            ];
+        if ($response->message !== 'Route not found') {
+            foreach ($response as $pair) {
+                $result[$pair->id] = [
+                    "CODE" => $pair->id,
+                    "NAME" => $pair->display_name
+                ];
+            }
         }
 
         return $result;
@@ -319,11 +356,13 @@ class Currency {
     public function getBtcalphaCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair) {
-            $result[$pair->name] = [
-                "CODE" => $pair->name,
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $pair) {
+                $result[$pair->name] = [
+                    "CODE" => $pair->name,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -332,11 +371,13 @@ class Currency {
     public function getBitzCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->data as $pair => $info) {
-            $result[strtoupper($pair)] = [
-                "CODE" => strtoupper($pair),
-                "NAME" => "none"
-            ];
+        if ($response->msg == "Success") {
+            foreach ($response->data as $pair => $info) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -345,11 +386,13 @@ class Currency {
     public function getCexioCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->data->pairs as $pair) {
-            $result[strtoupper($pair->symbol1 . $pair->symbol2)] = [
-                "CODE" => strtoupper($pair->symbol1 . $pair->symbol2),
-                "NAME" => "none"
-            ];
+        if ($response->ok == "ok") {
+            foreach ($response->data->pairs as $pair) {
+                $result[strtoupper($pair->symbol1 . $pair->symbol2)] = [
+                    "CODE" => strtoupper($pair->symbol1 . $pair->symbol2),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -358,11 +401,13 @@ class Currency {
     public function getCoinexchangeIoCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->result as $coin) {
-            $result[$coin->MarketAssetCode] = [
-                "CODE" => $coin->MarketAssetCode,
-                "NAME" => $coin->MarketAssetName
-            ];
+        if ($response->success == "1") {
+            foreach ($response->result as $coin) {
+                $result[$coin->MarketAssetCode] = [
+                    "CODE" => $coin->MarketAssetCode,
+                    "NAME" => $coin->MarketAssetName
+                ];
+            }
         }
 
         return $result;
@@ -371,11 +416,13 @@ class Currency {
     public function getCoinroomComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->crypto as $coin) {
-            $result[$coin] = [
-                "CODE" => $coin,
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response->crypto as $coin) {
+                $result[$coin] = [
+                    "CODE" => $coin,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -384,11 +431,13 @@ class Currency {
     public function getCryptopiaCoNzCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->Data as $coin) {
-            $result[$coin->Symbol] = [
-                "CODE" => $coin->Symbol,
-                "NAME" => $coin->Name
-            ];
+        if ($response->Success) {
+            foreach ($response->Data as $coin) {
+                $result[$coin->Symbol] = [
+                    "CODE" => $coin->Symbol,
+                    "NAME" => $coin->Name
+                ];
+            }
         }
 
         return $result;
@@ -397,11 +446,13 @@ class Currency {
     public function getDsxUkCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->pairs as $coin => $info) {
-            $result[strtoupper($coin)] = [
-                "CODE" => strtoupper($coin),
-                "NAME" => "none"
-            ];
+        if (empty($response->error)) {
+            foreach ($response->pairs as $coin => $info) {
+                $result[strtoupper($coin)] = [
+                    "CODE" => strtoupper($coin),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -410,11 +461,13 @@ class Currency {
     public function getGateIoCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair) {
-            $result[strtoupper($pair)] = [
-                "CODE" => strtoupper($pair),
-                "NAME" => "none"
-            ];
+        if (empty($response->code)) {
+            foreach ($response as $pair) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -426,12 +479,13 @@ class Currency {
             static::getResponse($url . "GetValidPrimaryCurrencyCodes"),
             static::getResponse($url . "GetValidSecondaryCurrencyCodes")
         );
-
-        foreach ($response as $coin) {
-            $result[strtoupper($coin)] = [
-                "CODE" => strtoupper($coin),
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $coin) {
+                $result[strtoupper($coin)] = [
+                    "CODE" => strtoupper($coin),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -440,11 +494,13 @@ class Currency {
     public function getLitebitEuCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->result as $coin) {
-            $result[strtoupper($coin->abbr)] = [
-                "CODE" => strtoupper($coin->abbr),
-                "NAME" => $coin->name
-            ];
+        if ($response->success) {
+            foreach ($response->result as $coin) {
+                $result[strtoupper($coin->abbr)] = [
+                    "CODE" => strtoupper($coin->abbr),
+                    "NAME" => $coin->name
+                ];
+            }
         }
 
         return $result;
@@ -453,11 +509,13 @@ class Currency {
     public function getLivecoinNetCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->info as $coin) {
-            $result[$coin->symbol] = [
-                "CODE" => $coin->symbol,
-                "NAME" => $coin->name
-            ];
+        if ($response->success) {
+            foreach ($response->info as $coin) {
+                $result[$coin->symbol] = [
+                    "CODE" => $coin->symbol,
+                    "NAME" => $coin->name
+                ];
+            }
         }
 
         return $result;
@@ -466,11 +524,13 @@ class Currency {
     public function getNeraexComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $coin) {
-            $result[strtoupper($coin->id)] = [
-                "CODE" => strtoupper($coin->id),
-                "NAME" => $coin->name
-            ];
+        if (!empty($response)) {
+            foreach ($response as $coin) {
+                $result[strtoupper($coin->id)] = [
+                    "CODE" => strtoupper($coin->id),
+                    "NAME" => $coin->name
+                ];
+            }
         }
 
         return $result;
@@ -479,12 +539,13 @@ class Currency {
     public function getQuadrigacxComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-
-        foreach ($response as $coin => $info) {
-            $result[strtoupper($coin)] = [
-                "CODE" => strtoupper($coin),
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $coin => $info) {
+                $result[strtoupper($coin)] = [
+                    "CODE" => strtoupper($coin),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -493,11 +554,13 @@ class Currency {
     public function getYobitNetCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->pairs as $pair => $info) {
-            $result[strtoupper($pair)] = [
-                "CODE" => strtoupper($pair),
-                "NAME" => "none"
-            ];
+        if (!empty($response->pairs)) {
+            foreach ($response->pairs as $pair => $info) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -506,11 +569,13 @@ class Currency {
     public function getZbComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair => $info) {
-            $result[strtoupper($pair)] = [
-                "CODE" => strtoupper($pair),
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $pair => $info) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -519,11 +584,13 @@ class Currency {
     public function getZaifJpCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $coin) {
-            $result[strtoupper($coin->name)] = [
-                "CODE" => strtoupper($coin->name),
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $coin) {
+                $result[strtoupper($coin->name)] = [
+                    "CODE" => strtoupper($coin->name),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -532,11 +599,13 @@ class Currency {
     public function getGatecoinComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->tickers as $pair) {
-            $result[$pair->currencyPair] = [
-                "CODE" => $pair->currencyPair,
-                "NAME" => "none"
-            ];
+        if (!empty($response->tickers)) {
+            foreach ($response->tickers as $pair) {
+                $result[$pair->currencyPair] = [
+                    "CODE" => $pair->currencyPair,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -545,11 +614,13 @@ class Currency {
     public function getKucoinComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->data->currencies as $coin) {
-            $result[$coin[0]] = [
-                "CODE" => $coin[0],
-                "NAME" => $coin[1]
-            ];
+        if ($response->success) {
+            foreach ($response->data->currencies as $coin) {
+                $result[$coin[0]] = [
+                    "CODE" => $coin[0],
+                    "NAME" => $coin[1]
+                ];
+            }
         }
 
         return $result;
@@ -558,11 +629,13 @@ class Currency {
     public function getLykkeComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair) {
-            $result[$pair->Id] = [
-                "CODE" => $pair->Id,
-                "NAME" => $pair->Name
-            ];
+        if (!empty($response)) {
+            foreach ($response as $pair) {
+                $result[$pair->Id] = [
+                    "CODE" => $pair->Id,
+                    "NAME" => $pair->Name
+                ];
+            }
         }
 
         return $result;
@@ -571,11 +644,13 @@ class Currency {
     public function getBitsaneComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair => $info) {
-            $result[$pair] = [
-                "CODE" => $pair,
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $pair => $info) {
+                $result[$pair] = [
+                    "CODE" => $pair,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -584,11 +659,13 @@ class Currency {
     public function getBleutradeComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->result as $coin) {
-            $result[$coin->Currency] = [
-                "CODE" => $coin->Currency,
-                "NAME" => $coin->CurrencyLong
-            ];
+        if ($response->success == "true") {
+            foreach ($response->result as $coin) {
+                $result[$coin->Currency] = [
+                    "CODE" => $coin->Currency,
+                    "NAME" => $coin->CurrencyLong
+                ];
+            }
         }
 
         return $result;
@@ -597,11 +674,13 @@ class Currency {
     public function getBraziliexComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $currency => $info) {
-            $result[strtoupper($currency)] = [
-                "CODE" => strtoupper($currency),
-                "NAME" => $info->name
-            ];
+        if (!empty($response)) {
+            foreach ($response as $currency => $info) {
+                $result[strtoupper($currency)] = [
+                    "CODE" => strtoupper($currency),
+                    "NAME" => $info->name
+                ];
+            }
         }
 
         return $result;
@@ -610,11 +689,13 @@ class Currency {
     public function getCryptomateCoUkCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $currency => $info) {
-            $result[$currency] = [
-                "CODE" => $currency,
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $currency => $info) {
+                $result[$currency] = [
+                    "CODE" => $currency,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -623,11 +704,13 @@ class Currency {
     public function getKunaIoCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair => $info) {
-            $result[strtoupper($pair)] = [
-                "CODE" => strtoupper($pair),
-                "NAME" => "none"
-            ];
+        if (!empty($response)) {
+            foreach ($response as $pair => $info) {
+                $result[strtoupper($pair)] = [
+                    "CODE" => strtoupper($pair),
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -636,11 +719,13 @@ class Currency {
     public function getNovaexchangeComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response->markets as $pair) {
-            $result[$pair->marketname] = [
-                "CODE" => $pair->marketname,
-                "NAME" => "none"
-            ];
+        if (!empty($response->status)) {
+            foreach ($response->markets as $pair) {
+                $result[$pair->marketname] = [
+                    "CODE" => $pair->marketname,
+                    "NAME" => "none"
+                ];
+            }
         }
 
         return $result;
@@ -649,11 +734,13 @@ class Currency {
     public function getSouthxchangeComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        foreach ($response as $pair) {
-            $result[$pair[0] . $pair[1]] = [
-                "CODE" => $pair[0] . $pair[1],
-                "NAME" => $pair[0] . "/" . $pair[1]
-            ];
+        if (!empty($response)) {
+            foreach ($response as $pair) {
+                $result[$pair[0] . $pair[1]] = [
+                    "CODE" => $pair[0] . $pair[1],
+                    "NAME" => $pair[0] . "/" . $pair[1]
+                ];
+            }
         }
 
         return $result;
@@ -663,12 +750,14 @@ class Currency {
         $result = [];
         $response = static::getResponse($url);
         var_dump($response);
-        foreach ($response->response as $pairs) {
-            foreach ($pairs as $pair) {
-                $result[$pair->market] = [
-                    "CODE" => $pair->market,
-                    "NAME" => "none"
-                ];
+        if ($response->success == 1) {
+            foreach ($response->response as $pairs) {
+                foreach ($pairs as $pair) {
+                    $result[$pair->market] = [
+                        "CODE" => $pair->market,
+                        "NAME" => "none"
+                    ];
+                }
             }
         }
 
