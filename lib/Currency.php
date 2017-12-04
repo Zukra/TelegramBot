@@ -5,43 +5,79 @@ namespace zkr\lib;
 
 class Currency {
 
-    private static function getResponse($url) {
+    public $logFile = __DIR__ . '/../log.txt';
+    public $errorFile = __DIR__ . '/../error.txt';
+    public $cookieFile = __DIR__ . "/../tmp/cookie.txt";
 
-        $cookieFile = "tmp/cookie.txt";
+    private function getResponse($url) {
+        $error = "";
 
         $headers = ["Content-Type: application/json;charset=UTF-8"];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
+        $ch = curl_init($url);
+        $options = [
+//            CURLOPT_HEADER => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_USERAGENT  => "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0",
 
-//        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-//        curl_setopt($ch, CURLOPT_HEADER, true);
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS      => 0,
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0");
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT        => 10,
 
-        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookieFile);
-        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookieFile);
-//        curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+            CURLOPT_COOKIEJAR  => $this->cookieFile,
+            CURLOPT_COOKIEFILE => $this->cookieFile,
+//            CURLOPT_COOKIESESSION => true,
+        ];
+        curl_setopt_array($ch, $options);
 
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $raw_response = curl_exec($ch);
+        $response = json_decode($raw_response);
 
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        // If the status is not 200, something is wrong
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        $callResult = curl_exec($ch);
+        // If there was no error, this will be an empty string
+        $curl_error = curl_error($ch);
 
         curl_close($ch);
 
-        file_put_contents($cookieFile, "");
+        file_put_contents($this->cookieFile, "");
 
-//        xprint($callResult);
+        if ($status != 200) {
+            // If node didn't return a nice error message, we need to make our own
+            switch ($status) {
+                case 400:
+                    $error = 'HTTP_BAD_REQUEST';
+                    break;
+                case 401:
+                    $error = 'HTTP_UNAUTHORIZED';
+                    break;
+                case 403:
+                    $error = 'HTTP_FORBIDDEN';
+                    break;
+                case 404:
+                    $error = 'HTTP_NOT_FOUND';
+                    break;
+                default:
+                    $error = $status;
+            }
+        }
 
-        return json_decode($callResult);
+        if (!empty($curl_error) || $status != 200) {
+            $error = date("d-m-Y H:i:s") . " " . $url . " "
+                . $error . "  " . $curl_error . PHP_EOL;
+            file_put_contents($this->errorFile, $error, FILE_APPEND);
+
+            return false;
+        }
+
+        return $response;
     }
 
     public function getBittrexCurrency($url) {

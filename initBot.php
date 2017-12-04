@@ -99,18 +99,12 @@ while (true) {
 
 //        "BITSTAMP.NET"           => $currency->getBitstampCurrency("https://www.bitstamp.net/api/v2/trading-pairs-info"), // - не фурычит
 //        "BITGRAIL.COM"           => $currency->getBitgrailComCurrency("https://bitgrail.com/api/v1/markets"),  // - не фурычит
-
-//        "HITBTCSYMBOL"           => $currency->getHitbtcCurrencySymbol("https://api.hitbtc.com/api/2/public/symbol"), // double site
     ];
 
 //    xprint($arCurrency);
-//    $test = $currency->getTestCurrency("https://api.vircurex.com/api/get_info_for_currency.json");
-
+//    $test = $currency->getTestCurrency("https://markets.bisq.network/api/22markets");
 
     $storageData = Tools::checkStoreData($arCurrency); // получение/проверка на наличие сохранённых данных
-
-//    $arExchange = array_keys($arCurrency); // биржи
-//    $storageData = Tools::getStoreData($arExchange); // получить сохранённые данные по биржам
 
     $arrDiff = Tools::compareData($arCurrency, $storageData); // разница сравнения
 
