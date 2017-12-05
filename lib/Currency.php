@@ -9,7 +9,7 @@ class Currency {
     public $errorFile = __DIR__ . '/../error.txt';
     public $cookieFile = __DIR__ . "/../tmp/cookie.txt";
 
-    private function getResponse($url) {
+    private function getResponse($url, $maxRedirs = 0) {
         $error = "";
 
         $headers = ["Content-Type: application/json;charset=UTF-8"];
@@ -22,7 +22,7 @@ class Currency {
 
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS      => 0,
+            CURLOPT_MAXREDIRS      => $maxRedirs,
 
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false,
@@ -34,6 +34,7 @@ class Currency {
             CURLOPT_COOKIEFILE => $this->cookieFile,
 //            CURLOPT_COOKIESESSION => true,
         ];
+
         curl_setopt_array($ch, $options);
 
         $raw_response = curl_exec($ch);
@@ -44,6 +45,7 @@ class Currency {
 
         // If there was no error, this will be an empty string
         $curl_error = curl_error($ch);
+        $curl_errno = curl_errno($ch);
 
         curl_close($ch);
 
@@ -71,7 +73,7 @@ class Currency {
 
         if (!empty($curl_error) || $status != 200) {
             $error = date("d-m-Y H:i:s") . " " . $url . " "
-                . $error . "  " . $curl_error . PHP_EOL;
+                . $error . "  " . $curl_errno . "  " . $curl_error . PHP_EOL;
             file_put_contents($this->errorFile, $error, FILE_APPEND);
 
             return false;
@@ -176,9 +178,8 @@ class Currency {
 
     public function getBitstampCurrency($url) {
         $result = [];
-        $response = static::getResponse($url);
-        var_dump($response);
-        if (!empty($response)) {
+        $response = static::getResponse($url, 1);
+        if ($response) {
             foreach ($response as $pairs) {
                 $result[$pairs->name] = [
                     "CODE" => $pairs->name,
@@ -880,6 +881,23 @@ class Currency {
                     $result[strtoupper($info->currency)] = [
                         "CODE" => strtoupper($info->currency),
                         "NAME" => "none"
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    public function getBigOneCurrency($url) {
+        $result = [];
+        $response = static::getResponse($url);
+        if ($response) {
+            foreach ($response->data as $pair) {
+                if ($pair->symbol) {
+                    $result[$pair->symbol] = [
+                        "CODE" => $pair->symbol,
+                        "NAME" => $pair->quote_name . "/" . $pair->base_name
                     ];
                 }
             }

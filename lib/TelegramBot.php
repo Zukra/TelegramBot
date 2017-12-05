@@ -43,4 +43,11 @@ class TelegramBot {
             "parse_mode" => $parse_mode
         ]);
     }
+
+    public function sendMessageToChats($arChatId = [], $msg = "", $mode = "") {
+        foreach ($arChatId as $chatId) {
+            $this->sendMessage($chatId, $msg, $mode);
+        }
+
+    }
 }
