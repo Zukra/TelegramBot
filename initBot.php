@@ -34,13 +34,13 @@ $msgQueue = []; // очередь сообщений для отправки с 
 $sendTime = 0;  // время отправки
 $timeForMoreSend = 0; // время для отправки сообщения в доп. чат
 
-/*
+
 // for test
 $arGeneralChatId = [-1001325237083, -218487457];
 $arOtherChatID = [-218487457];
 $intervalSec = 10;
 $intervalSecondSec = 30;
-*/
+
 $currency = new Currency();
 $telegramApi = new TelegramBot();
 
@@ -70,7 +70,7 @@ while (true) {
 //        "GATECOIN.COM"           => $currency->getGatecoinComCurrency("https://api.gatecoin.com/Public/LiveTickers"),
 //        "KUCOIN.COM"             => $currency->getKucoinComCurrency("https://api.kucoin.com/v1/open/currencies"),
 //        "LYKKE.COM"              => $currency->getLykkeComCurrency("https://hft-api.lykke.com/api/AssetPairs"),
-//        "BITSANE.COM"            => $currency->getBitsaneComCurrency("https://bitsane.com/api/public/ticker"),
+//        "BITSANE.COM"            => $currency->getBitsaneComCurrency("https://bitsane.com/api/public/assets/currencies"),
 //        "BLEUTRADE.COM"          => $currency->getBleutradeComCurrency("https://bleutrade.com/api/v2/public/getcurrencies"),
 //        "BRAZILIEX.COM"          => $currency->getBraziliexComCurrency("https://braziliex.com/api/v1/public/currencies"),
 //        "CRYPTOMATE.CO.UK"       => $currency->getCryptomateCoUkCurrency("https://cryptomate.co.uk/api/all/"),
@@ -98,12 +98,12 @@ while (true) {
 //        "VIRCUREX.COM"           => $currency->getVircurexComCurrency("https://api.vircurex.com/api/get_info_for_currency.json"),
 //        "BIG.ONE"                => $currency->getBigOneCurrency("https://api.big.one/markets"),
 
-        "BITSTAMP.NET"           => $currency->getBitstampCurrency("https://www.bitstamp.net/api/v2/trading-pairs-info"), // ???
+//        "BITSTAMP.NET"           => $currency->getBitstampCurrency("https://www.bitstamp.net/api/v2/trading-pairs-info"), // ???
 
 //        "BITGRAIL.COM"           => $currency->getBitgrailComCurrency("https://bitgrail.com/api/v1/markets"),  // - не фурычит
     ];
 
-//    xprint($arCurrency);
+    xprint($arCurrency);
 //    $test = $currency->getTestCurrency("https://www.bitstamp.net/api/v2/trading-pairs-info");
 
     $storageData = Tools::checkStoreData($arCurrency); // получение/проверка на наличие сохранённых данных

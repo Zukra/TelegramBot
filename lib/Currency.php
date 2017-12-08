@@ -179,7 +179,7 @@ class Currency {
     public function getBitstampCurrency($url) {
         $result = [];
         $response = static::getResponse($url, 1);
-        if ($response) {
+        if ($response[0]) {
             foreach ($response as $pairs) {
                 $result[$pairs->name] = [
                     "CODE" => $pairs->name,
@@ -675,12 +675,15 @@ class Currency {
     public function getBitsaneComCurrency($url) {
         $result = [];
         $response = static::getResponse($url);
-        if (!empty($response)) {
-            foreach ($response as $pair => $info) {
-                $result[$pair] = [
-                    "CODE" => $pair,
-                    "NAME" => "none"
-                ];
+
+        if ($response) {
+            foreach ($response as $currency => $info) {
+                if ($currency != "statusCode") {
+                    $result[$currency] = [
+                        "CODE" => $currency,
+                        "NAME" => $info->full_name
+                    ];
+                }
             }
         }
 
