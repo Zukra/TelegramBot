@@ -4,7 +4,7 @@ namespace zkr\lib;
 
 
 class TelegramBot {
-    protected $token = "491206841:AAH8wHuoCrTJ7oq5TjrCMHKrPkd7e9z4QSA";
+    protected $token = "491206841:AAH8...";
     protected $urlBasic = "https://api.telegram.org/bot";
     protected $chatId; // 412846761
     protected $updateId;
